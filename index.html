@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Para Carla 💖</title>
+
+<style>
+body {
+    margin:0;
+    background:black;
+    color:white;
+    font-family:'Courier New', monospace;
+    text-align:center;
+    overflow:hidden;
+}
+h1 { margin-top:20px; }
+
+#lock { display:flex; justify-content:center; gap:10px; margin-top:40px; flex-wrap: wrap; }
+.digit { width:60px; height:60px; border:2px solid white; font-size:28px; display:flex; justify-content:center; align-items:center; background:#111; user-select:none; cursor:pointer; border-radius:8px; }
+button { margin-top:5px; width:60px; }
+#hint { margin-top:20px; font-size:14px; opacity:0.8; }
+
+#galaxy { display:none; position:absolute; inset:0; }
+#center-name { position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:48px; color:pink; text-shadow:0 0 20px hotpink; animation:pulse 2s infinite; z-index:2; }
+@keyframes pulse {0%{transform:translate(-50%,-50%) scale(1);}50%{transform:translate(-50%,-50%) scale(1.1);}100%{transform:translate(-50%,-50%) scale(1);}}
+
+#orbit { position:absolute; top:50%; left:50%; width:350px; height:350px; transform:translate(-50%, -50%); animation:spin 20s linear infinite; z-index:1; }
+#orbit span { position:absolute; left:50%; top:50%; transform-origin:0 0; color:pink; font-size:18px; white-space:pre; }
+@keyframes spin {from{transform:translate(-50%, -50%) rotate(0deg);}to{transform:translate(-50%, -50%) rotate(360deg);}}
+
+.star { position:absolute; color:pink; animation:float 10s linear infinite; white-space:nowrap; }
+@keyframes float {from{transform:translateY(100vh); opacity:0;} to{transform:translateY(-20vh); opacity:1;}}
+</style>
+</head>
+<body>
+
+<h1>🔒 Desbloquea mi corazón</h1>
+
+<div id="lock">
+    <div class="digit" data-num="0">0</div>
+    <div class="digit" data-num="0">0</div>
+    <div class="digit" data-num="0">0</div>
+    <div class="digit" data-num="0">0</div>
+</div>
+<p id="hint">Toca los números hasta que tengas la combinación 💕</p>
+
+<div id="galaxy">
+    <div id="orbit"></div>
+    <div id="center-name">Carla</div>
+</div>
+
+<audio id="song" loop>
+    <source src="iwannabeyours.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const digits = document.querySelectorAll(".digit");
+const lock = document.getElementById("lock");
+const galaxy = document.getElementById("galaxy");
+const orbit = document.getElementById("orbit");
+const song = document.getElementById("song");
+const targetCode = [2,9,0,6];
+
+digits.forEach((d,i)=>{
+    d.addEventListener("click", ()=>{
+        let val = parseInt(d.getAttribute("data-num"));
+        val = (val+1)%10;
+        d.setAttribute("data-num", val);
+        d.textContent = val;
+        checkCode();
+    });
+});
+
+function checkCode(){
+    const code = [...digits].map(d=>parseInt(d.getAttribute("data-num")));
+    if(code.join("") === targetCode.join("")) unlock();
+}
+
+function unlock(){
+    lock.style.display="none";
+    document.querySelector("h1").textContent="🌌 Mi universo tiene tu nombre";
+    document.getElementById("hint").style.display="none";
+    galaxy.style.display="block";
+    song.volume=0.5;
+    song.play();
+    createGalaxy();
+    createOrbitText("¿Quieres ser mi mañana?");
+}
+
+function createGalaxy(){
+    const phrases=["Te amo Carla 💖","Eres mi galaxia ✨","Todo gira alrededor de ti 🌌","Mi lugar seguro 💕","Siempre tú 💫","Mi estrella favorita ⭐"];
+    for(let i=0;i<40;i++){
+        const star=document.createElement("div");
+        star.className="star";
+        star.textContent=phrases[Math.floor(Math.random()*phrases.length)];
+        star.style.left=Math.random()*100+"vw";
+        star.style.animationDuration=(6+Math.random()*6)+"s";
+        star.style.fontSize=(12+Math.random()*10)+"px";
+        galaxy.appendChild(star);
+    }
+}
+
+function createOrbitText(text){
+    const radius=160;
+    const chars=text.split("");
+    const angleStep=360/chars.length;
+    chars.forEach((char,i)=>{
+        const span=document.createElement("span");
+        const angle=i*angleStep;
+        span.style.transform=`rotate(${angle}deg) translate(${radius}px) rotate(90deg)`;
+        span.textContent=char;
+        orbit.appendChild(span);
+    });
+}
+</script>
+
+</body>
+</html>
